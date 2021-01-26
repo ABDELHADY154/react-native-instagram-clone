@@ -8,26 +8,29 @@ import SplashScreen from "./src/Components/MainScreen/SplashScreen";
 import HomeScreen from "./src/Components/Home/HomeScreen";
 import SignInScreen from "./src/Components/Auth/SignInScreen";
 import { firebase } from "./src/Firebase/FireBaseConfig";
-
+import * as Font from "expo-font";
 const Stack = createStackNavigator();
 
 export default class App extends Component {
   state = {
-    isLoading: "",
     userToken: null,
     isSignout: "",
+    fontsLoaded: true,
   };
+  async loadFonts() {
+    await Font.loadAsync({
+      insta: require("./src/Assets/Fonts/Billabong.ttf"),
+    });
+    this.setState({ fontsLoaded: true });
+  }
+  componentDidMount() {
+    setTimeout(() => {
+      this.loadFonts();
+    }, 2000);
+  }
 
   render() {
-    const user = async () => {
-      console.log(
-        (await firebase.firestore().collection("users").doc("1").get()).data()
-          .name,
-      );
-    };
-    user();
-    // console.log();
-    if (this.state.isLoading) {
+    if (!this.state.fontsLoaded == true) {
       return <SplashScreen />;
     }
     return (
@@ -40,12 +43,16 @@ export default class App extends Component {
               options={{
                 title: "Sign in",
                 animationTypeForReplace: this.state.isSignout ? "pop" : "push",
+                header: () => {
+                  "none";
+                },
               }}
             />
           ) : (
             <Stack.Screen name="Home" component={HomeScreen} />
           )}
         </Stack.Navigator>
+        <StatusBar style="dark" />
       </NavigationContainer>
     );
   }
