@@ -13,9 +13,9 @@ const Stack = createStackNavigator();
 
 export default class App extends Component {
   state = {
-    userToken: null,
-    isSignout: "",
-    fontsLoaded: true,
+    isLoggedIn: false,
+    isSignout: true,
+    fontsLoaded: false,
   };
   async loadFonts() {
     await Font.loadAsync({
@@ -36,20 +36,26 @@ export default class App extends Component {
     return (
       <NavigationContainer>
         <Stack.Navigator>
-          {this.state.userToken == null ? (
+          {this.state.isLoggedIn == false ? (
             <Stack.Screen
               name="SignIn"
               component={SignInScreen}
               options={{
-                title: "Sign in",
-                animationTypeForReplace: this.state.isSignout ? "pop" : "push",
                 header: () => {
                   "none";
                 },
               }}
             />
           ) : (
-            <Stack.Screen name="Home" component={HomeScreen} />
+            <Stack.Screen
+              name="Home"
+              component={HomeScreen}
+              options={{
+                header: () => {
+                  "none";
+                },
+              }}
+            />
           )}
         </Stack.Navigator>
         <StatusBar style="dark" />

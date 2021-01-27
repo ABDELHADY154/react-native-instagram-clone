@@ -13,6 +13,7 @@ export default class SplashScreen extends Component {
       <View style={styles.container}>
         <Image style={styles.logo} source={require("../../Assets/logo.png")} />
         <Text style={styles.txt}>Instagram</Text>
+        <StatusBar style="dark" />
       </View>
     );
   }
