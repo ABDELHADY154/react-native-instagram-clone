@@ -1,10 +1,9 @@
-import { StatusBar } from "expo-status-bar";
 import React, { Component } from "react";
 import { StyleSheet, Text, View, Image } from "react-native";
-import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { Input, Button } from "galio-framework";
 import { firebase } from "../../Firebase/FireBaseConfig";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Stack = createStackNavigator();
 
@@ -20,7 +19,7 @@ export default class SignInScreen extends Component {
     const users = collection.get();
     users
       .then(res => {
-        res.forEach(doc => {
+        res.forEach(async doc => {
           if (
             this.state.email == doc.data().email &&
             this.state.password == doc.data().password
@@ -29,9 +28,15 @@ export default class SignInScreen extends Component {
               id: doc.id,
               data: doc.data(),
             };
+            var jsonUserData = JSON.stringify(user);
+            await AsyncStorage.setItem("userData", jsonUserData);
             this.props.signIn(user);
             console.log("user logged in successfully");
-          } else {
+          }
+          if (
+            this.state.email !== doc.data().email ||
+            this.state.password !== doc.data().password
+          ) {
             this.setState({ err: "user data invalid" });
           }
         });
@@ -50,9 +55,9 @@ export default class SignInScreen extends Component {
             style={styles.logo}
             source={require("../../Assets/logo.png")}
           />
+          <Text style={styles.txt}>Instagram</Text>
         </View>
         <View style={styles.textContainer}>
-          <Text style={{ color: "red", fontSize: 15 }}>{this.state.err}</Text>
           <Input
             style={styles.TextInput}
             placeholder="Emal"
@@ -76,6 +81,8 @@ export default class SignInScreen extends Component {
             rounded
             placeholderTextColor="grey"
           />
+          <Text style={{ color: "red", fontSize: 15 }}>{this.state.err}</Text>
+
           <Button color="#E14D47" round onPress={this.login}>
             Login
           </Button>
@@ -112,47 +119,24 @@ const styles = StyleSheet.create({
     width: 100,
   },
   logoContainer: {
-    // height: "40%",
     width: "100%",
     flexDirection: "column",
-    justifyContent: "space-evenly",
+    justifyContent: "center",
     alignItems: "center",
   },
   textContainer: {
-    // height: "60%",
-    marginTop: 50,
+    marginTop: -40,
     width: "100%",
     flexDirection: "column",
-    justifyContent: "flex-start",
+    justifyContent: "center",
     alignItems: "center",
   },
+  txt: {
+    fontSize: 60,
+    color: "black",
+    fontFamily: "insta",
+    width: "100%",
+    height: 120,
+    textAlign: "center",
+  },
 });
-
-//
-// firebase
-//   .auth()
-//   .createUserWithEmailAndPassword(
-//     this.state.email,
-//     this.state.password,
-//   )
-//   .then(res => {
-//     console.log("User account created & signed in!");
-//     this.setState({ uuid: res.user.uid });
-//   })
-//   .catch(error => {
-//     if (error.code === "auth/email-already-in-use") {
-//       this.setState({
-//         err: "That email address is already in use!",
-//       });
-//     }
-//     if (error.code === "auth/invalid-email") {
-//       this.setState({ err: "That email address is invalid!" });
-//     }
-//     console.error(error);
-//   });
-// firebase
-//   .auth()
-//   .onAuthStateChanged({
-//     email: this.state.email,
-//     password: this.state.email,
-//   });

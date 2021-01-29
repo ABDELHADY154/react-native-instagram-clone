@@ -1,7 +1,7 @@
 import "react-native-gesture-handler";
 import { StatusBar } from "expo-status-bar";
 import React, { Component } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, ActivityIndicator } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import SplashScreen from "./src/Components/MainScreen/SplashScreen";
@@ -12,6 +12,8 @@ import { firebase } from "./src/Firebase/FireBaseConfig";
 import { useNavigation } from "@react-navigation/native";
 import { LogBox } from "react-native";
 import * as Font from "expo-font";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
 const Stack = createStackNavigator();
 
 // function SignIn(props) {
@@ -26,12 +28,18 @@ export default class App extends Component {
     isLoggedIn: false,
     isSignout: true,
     fontsLoaded: false,
+    isLoading: false,
     userData: {},
+    user: {},
   };
   SignIn = props => {
     const navigation = useNavigation();
-    const loggedIn = userData => {
-      this.setState({ isLoggedIn: true, userData: userData });
+    const loggedIn = async userData => {
+      this.setState({
+        isLoggedIn: true,
+        userData: userData,
+        user: await AsyncStorage.getItem("userData"),
+      });
     };
     return (
       <SignInScreen {...props} navigation={navigation} signIn={loggedIn} />
@@ -40,8 +48,12 @@ export default class App extends Component {
   SignUp = props => {
     const navigation = useNavigation();
 
-    const register = Data => {
-      this.setState({ isLoggedIn: true, userData: Data });
+    const register = async Data => {
+      this.setState({
+        isLoggedIn: true,
+        userData: Data,
+        user: await AsyncStorage.getItem("userData"),
+      });
     };
     return (
       <SignUpScreen {...props} navigation={navigation} registered={register} />
@@ -51,20 +63,23 @@ export default class App extends Component {
     await Font.loadAsync({
       insta: require("./src/Assets/Fonts/Billabong.ttf"),
     });
+    this.setState({ fontsLoaded: true });
   }
-  componentDidMount() {
+  async componentDidMount() {
     this.loadFonts();
-
     setTimeout(() => {
-      this.setState({ fontsLoaded: true });
-    }, 3000);
+      this.setState({ isLoading: true });
+    }, 2000);
   }
 
   render() {
     if (!this.state.fontsLoaded == true) {
+      return <ActivityIndicator size="large" color="#E14D47" />;
+    }
+    if (!this.state.isLoading == true) {
       return <SplashScreen />;
     }
-    console.log(this.state.userData);
+    console.log(this.state.user);
     return (
       <NavigationContainer>
         <Stack.Navigator>

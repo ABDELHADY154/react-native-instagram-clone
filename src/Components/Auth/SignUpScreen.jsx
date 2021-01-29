@@ -1,12 +1,10 @@
-import { StatusBar } from "expo-status-bar";
 import React, { Component } from "react";
 import { StyleSheet, Text, View, Image } from "react-native";
-import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { Input, Button } from "galio-framework";
 import { firebase } from "../../Firebase/FireBaseConfig";
-import { Avatar } from "react-native-paper";
 import * as ImagePicker from "expo-image-picker";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Stack = createStackNavigator();
 
@@ -21,9 +19,11 @@ export default class SignUpScreen extends Component {
   async componentDidMount() {
     if (Platform.OS !== "web") {
       //for galary
-      //const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      const {
+        status,
+      } = await ImagePicker.requestMediaLibraryPermissionsAsync();
       //for camera
-      const { status } = await ImagePicker.getCameraPermissionsAsync();
+      // const { status } = await ImagePicker.getCameraPermissionsAsync();
       if (status !== "granted") {
         alert("Sorry, we need camera roll permissions to make this work!");
       }
@@ -42,7 +42,13 @@ export default class SignUpScreen extends Component {
       */
 
     //for camera
-    let result = await ImagePicker.launchCameraAsync();
+    // let result = await ImagePicker.launchCameraAsync();
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: false,
+      // aspect: [4, 3],
+      quality: 1,
+    });
     // console.log(result);
 
     if (!result.cancelled) {
@@ -51,11 +57,17 @@ export default class SignUpScreen extends Component {
   };
   signUp = () => {
     const collection = firebase.firestore().collection("users");
-    if (this.state.fullName && this.state.email && this.state.password) {
+    if (
+      this.state.fullName &&
+      this.state.email &&
+      this.state.password &&
+      this.state.image
+    ) {
       var user = {
         name: this.state.fullName,
         email: this.state.email,
         password: this.state.password,
+        img: this.state.image,
       };
       collection
         .add(user)
@@ -66,6 +78,8 @@ export default class SignUpScreen extends Component {
             id: userId,
             data: user,
           };
+          var jsonUserData = JSON.stringify(userData);
+          await AsyncStorage.setItem("userData", jsonUserData);
           this.props.registered(userData);
           console.log("registerd sucessflly");
         })
@@ -77,7 +91,6 @@ export default class SignUpScreen extends Component {
     }
   };
   render() {
-    console.log(this.state.image);
     const { navigation } = this.props;
     return (
       <View style={styles.container}>
@@ -86,23 +99,34 @@ export default class SignUpScreen extends Component {
             style={styles.logo}
             source={require("../../Assets/logo.png")}
           />
+          <Text style={styles.txt}>Instagram</Text>
         </View>
 
         <View style={styles.textContainer}>
-          <Text style={{ color: "red", fontSize: 15 }}>{this.state.err}</Text>
           <View style={{ alignItems: "center", justifyContent: "center" }}>
-            <Button
-              title="Pick an image from camera roll"
-              onPress={this.pickImage}
-            >
-              Upload
-            </Button>
-            {this.state.image && (
+            {this.state.image ? (
               <Image
                 source={{ uri: this.state.image }}
-                style={{ width: 200, height: 200 }}
+                style={{ width: 100, height: 100, borderRadius: 150 }}
               />
+            ) : (
+              <Button
+                onlyIcon
+                icon="plus"
+                iconFamily="antdesign"
+                iconSize={30}
+                color="#E14D47"
+                iconColor="#fff"
+                style={{ width: 40, height: 40 }}
+                onPress={this.pickImage}
+              >
+                Add Image
+              </Button>
             )}
+
+            {/* {this.state.image && (
+              
+            )} */}
           </View>
           {/* <Avatar.Text size={40} label="+" /> */}
           <Input
@@ -139,6 +163,8 @@ export default class SignUpScreen extends Component {
             rounded
             placeholderTextColor="grey"
           />
+          <Text style={{ color: "red", fontSize: 15 }}>{this.state.err}</Text>
+
           <Button color="#E14D47" round onPress={this.signUp}>
             Register
           </Button>
@@ -155,46 +181,6 @@ export default class SignUpScreen extends Component {
       </View>
     );
   }
-}
-function ImagePickerExample() {
-  const [image, setImage] = useState(null);
-
-  useEffect(() => {
-    (async () => {
-      if (Platform.OS !== "web") {
-        const {
-          status,
-        } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-        if (status !== "granted") {
-          alert("Sorry, we need camera roll permissions to make this work!");
-        }
-      }
-    })();
-  }, []);
-
-  const pickImage = async () => {
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 1,
-    });
-
-    console.log(result);
-
-    if (!result.cancelled) {
-      setImage(result.uri);
-    }
-  };
-
-  return (
-    <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-      <Button title="Pick an image from camera roll" onPress={pickImage} />
-      {image && (
-        <Image source={{ uri: image }} style={{ width: 200, height: 200 }} />
-      )}
-    </View>
-  );
 }
 const styles = StyleSheet.create({
   container: {
@@ -214,18 +200,24 @@ const styles = StyleSheet.create({
     width: 100,
   },
   logoContainer: {
-    // height: "40%",
     width: "100%",
     flexDirection: "column",
     justifyContent: "space-evenly",
     alignItems: "center",
   },
   textContainer: {
-    // height: "60%",
-    marginTop: 50,
+    marginTop: -40,
     width: "100%",
     flexDirection: "column",
     justifyContent: "flex-start",
     alignItems: "center",
+  },
+  txt: {
+    fontSize: 60,
+    color: "black",
+    fontFamily: "insta",
+    width: "100%",
+    height: 120,
+    textAlign: "center",
   },
 });
