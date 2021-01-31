@@ -5,8 +5,8 @@ import { Input, Button } from "galio-framework";
 import { firebase } from "../../Firebase/FireBaseConfig";
 import * as ImagePicker from "expo-image-picker";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-
-const Stack = createStackNavigator();
+import { Avatar } from "react-native-elements";
+import { Divider } from "react-native-elements";
 
 export default class SignUpScreen extends Component {
   state = {
@@ -18,39 +18,33 @@ export default class SignUpScreen extends Component {
   };
   async componentDidMount() {
     if (Platform.OS !== "web") {
-      //for galary
       const {
         status,
       } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-      //for camera
-      // const { status } = await ImagePicker.getCameraPermissionsAsync();
+      if (status !== "granted") {
+        alert("Sorry, we need camera roll permissions to make this work!");
+      }
+    }
+    if (Platform.OS !== "web") {
+      const { status } = await ImagePicker.getCameraPermissionsAsync();
       if (status !== "granted") {
         alert("Sorry, we need camera roll permissions to make this work!");
       }
     }
   }
+  cameraImage = async () => {
+    let result = await ImagePicker.launchCameraAsync();
+    if (!result.cancelled) {
+      this.setState({ image: result.uri });
+    }
+  };
 
   pickImage = async () => {
-    /*
-        //for galary
-        let result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ImagePicker.MediaTypeOptions.All,
-            allowsEditing: false,
-            aspect: [4, 3],
-            quality: 1,
-          });
-      */
-
-    //for camera
-    // let result = await ImagePicker.launchCameraAsync();
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
       allowsEditing: false,
-      // aspect: [4, 3],
       quality: 1,
     });
-    // console.log(result);
-
     if (!result.cancelled) {
       this.setState({ image: result.uri });
     }
@@ -69,22 +63,26 @@ export default class SignUpScreen extends Component {
         password: this.state.password,
         img: this.state.image,
       };
-      collection
-        .add(user)
+      firebase
+        .auth()
+        .createUserWithEmailAndPassword(this.state.email, this.state.password)
         .then(async res => {
-          let userId = res.id;
-          let user = (await collection.doc(userId).get()).data();
+          res.user.updateProfile({
+            displayName: this.state.fullName,
+            photoURL: this.state.image,
+          });
+          console.log(res.user.displayName);
           var userData = {
-            id: userId,
-            data: user,
+            user: res.user,
           };
+          console.log("User registered successfully!");
           var jsonUserData = JSON.stringify(userData);
           await AsyncStorage.setItem("userData", jsonUserData);
           this.props.registered(userData);
           console.log("registerd sucessflly");
         })
-        .catch(err => {
-          console.log(err);
+        .catch(error => {
+          this.setState({ err: error.message });
         });
     } else {
       this.setState({ err: "Please fill all fields" });
@@ -101,34 +99,65 @@ export default class SignUpScreen extends Component {
           />
           <Text style={styles.txt}>Instagram</Text>
         </View>
-
         <View style={styles.textContainer}>
           <View style={{ alignItems: "center", justifyContent: "center" }}>
             {this.state.image ? (
-              <Image
-                source={{ uri: this.state.image }}
-                style={{ width: 100, height: 100, borderRadius: 150 }}
-              />
+              <>
+                <View>
+                  <Button
+                    onlyIcon
+                    icon="close-outline"
+                    iconFamily="ionicon"
+                    iconSize={20}
+                    color="#E14D47"
+                    iconColor="#fff"
+                    style={{ width: 25, height: 25 }}
+                    onPress={() => {
+                      this.setState({ image: null });
+                    }}
+                  >
+                    Add Image
+                  </Button>
+                  <Avatar
+                    rounded
+                    source={{
+                      uri: this.state.image,
+                    }}
+                    size="large"
+                  />
+                </View>
+              </>
             ) : (
-              <Button
-                onlyIcon
-                icon="plus"
-                iconFamily="antdesign"
-                iconSize={30}
-                color="#E14D47"
-                iconColor="#fff"
-                style={{ width: 40, height: 40 }}
-                onPress={this.pickImage}
-              >
-                Add Image
-              </Button>
+              <>
+                <View style={{ flexDirection: "row" }}>
+                  <Button
+                    onlyIcon
+                    icon="plus"
+                    iconFamily="antdesign"
+                    iconSize={30}
+                    color="#E14D47"
+                    iconColor="#fff"
+                    style={{ width: 40, height: 40 }}
+                    onPress={this.pickImage}
+                  >
+                    Add Image
+                  </Button>
+                  <Button
+                    onlyIcon
+                    icon="camera"
+                    iconFamily="antdesign"
+                    iconSize={30}
+                    color="#E14D47"
+                    iconColor="#fff"
+                    style={{ width: 40, height: 40 }}
+                    onPress={this.cameraImage}
+                  >
+                    Add Image
+                  </Button>
+                </View>
+              </>
             )}
-
-            {/* {this.state.image && (
-              
-            )} */}
           </View>
-          {/* <Avatar.Text size={40} label="+" /> */}
           <Input
             style={styles.TextInput}
             placeholder="Full Name"
@@ -168,6 +197,14 @@ export default class SignUpScreen extends Component {
           <Button color="#E14D47" round onPress={this.signUp}>
             Register
           </Button>
+          <Divider
+            style={{
+              backgroundColor: "black",
+              width: "50%",
+              height: 1,
+              borderRadius: 50,
+            }}
+          />
           <Button
             color="info"
             round
@@ -221,3 +258,15 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
 });
+// collection
+//   .add(user)
+//   .then(async res => {
+//     let userId = res.id;
+//     let user = (await collection.doc(userId).get()).data();
+//     var userData = {
+//       id: userId,
+//       data: user,
+//     };
+//     var jsonUserData = JSON.stringify(userData);
+//     await AsyncStorage.setItem("userData", jsonUserData);
+//     this.props.registered(userData);

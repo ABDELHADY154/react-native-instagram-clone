@@ -4,8 +4,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 import { Input, Button } from "galio-framework";
 import { firebase } from "../../Firebase/FireBaseConfig";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-
-const Stack = createStackNavigator();
+import { Divider } from "react-native-elements";
 
 export default class SignInScreen extends Component {
   state = {
@@ -15,35 +14,18 @@ export default class SignInScreen extends Component {
   };
 
   login = () => {
-    const collection = firebase.firestore().collection("users");
-    const users = collection.get();
-    users
-      .then(res => {
-        res.forEach(async doc => {
-          if (
-            this.state.email == doc.data().email &&
-            this.state.password == doc.data().password
-          ) {
-            var user = {
-              id: doc.id,
-              data: doc.data(),
-            };
-            var jsonUserData = JSON.stringify(user);
-            await AsyncStorage.setItem("userData", jsonUserData);
-            this.props.signIn(user);
-            console.log("user logged in successfully");
-          }
-          if (
-            this.state.email !== doc.data().email ||
-            this.state.password !== doc.data().password
-          ) {
-            this.setState({ err: "user data invalid" });
-          }
-        });
-      })
-      .catch(err => {
-        console.log(err);
-      });
+    if (this.state.email === "" && this.state.password === "") {
+      Alert.alert("Enter details to signin!");
+    } else {
+      firebase
+        .auth()
+        .signInWithEmailAndPassword(this.state.email, this.state.password)
+        .then(res => {
+          this.props.signIn(res.user);
+          console.log("User logged-in successfully!");
+        })
+        .catch(error => this.setState({ errorMessage: error.message }));
+    }
   };
   render() {
     const { navigation } = this.props;
@@ -82,10 +64,17 @@ export default class SignInScreen extends Component {
             placeholderTextColor="grey"
           />
           <Text style={{ color: "red", fontSize: 15 }}>{this.state.err}</Text>
-
           <Button color="#E14D47" round onPress={this.login}>
             Login
           </Button>
+          <Divider
+            style={{
+              backgroundColor: "black",
+              width: "50%",
+              height: 1,
+              borderRadius: 50,
+            }}
+          />
           <Button
             color="info"
             round
@@ -140,3 +129,32 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
 });
+// const collection = firebase.firestore().collection("users");
+// const users = collection.get();
+// users
+//   .then(res => {
+//     res.forEach(async doc => {
+//       if (
+//         this.state.email == doc.data().email &&
+//         this.state.password == doc.data().password
+//       ) {
+//         var user = {
+//           id: doc.id,
+//           data: doc.data(),
+//         };
+//         var jsonUserData = JSON.stringify(user);
+//         await AsyncStorage.setItem("userData", jsonUserData);
+//         this.props.signIn(user);
+//         console.log("user logged in successfully");
+//       }
+//       if (
+//         this.state.email !== doc.data().email ||
+//         this.state.password !== doc.data().password
+//       ) {
+//         this.setState({ err: "user data invalid" });
+//       }
+//     });
+//   })
+//   .catch(err => {
+//     console.log(err);
+//   });

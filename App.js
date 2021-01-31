@@ -16,11 +16,6 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Stack = createStackNavigator();
 
-// function SignIn(props) {
-//   const navigation = useNavigation();
-//   // const { signUp } = React.useContext(AuthContext);userSignUp={signUp}
-//   return <SignInScreen {...props} navigation={navigation} />;
-// }
 LogBox.ignoreLogs(["Setting a timer for a long period of time"]);
 
 export default class App extends Component {
@@ -31,6 +26,19 @@ export default class App extends Component {
     isLoading: false,
     userData: {},
     user: {},
+  };
+  Home = props => {
+    const navigation = useNavigation();
+    const loggedOut = async userData => {
+      this.setState({
+        isLoggedIn: false,
+        userData: userData,
+        user: await AsyncStorage.getItem("userData"),
+      });
+    };
+    return (
+      <HomeScreen {...props} navigation={navigation} signOut={loggedOut} />
+    );
   };
   SignIn = props => {
     const navigation = useNavigation();
@@ -67,6 +75,9 @@ export default class App extends Component {
   }
   async componentDidMount() {
     this.loadFonts();
+    // if (firebase.auth().currentUser) {
+    //   this.setState({ isLoggedIn: true });
+    // }
     setTimeout(() => {
       this.setState({ isLoading: true });
     }, 2000);
@@ -79,11 +90,10 @@ export default class App extends Component {
     if (!this.state.isLoading == true) {
       return <SplashScreen />;
     }
-    console.log(this.state.user);
     return (
       <NavigationContainer>
         <Stack.Navigator>
-          {this.state.isLoggedIn == false ? (
+          {firebase.auth().currentUser == null ? ( //this.state.isLoggedIn == false ? (
             <>
               <Stack.Screen
                 name="SignIn"
@@ -107,7 +117,7 @@ export default class App extends Component {
           ) : (
             <Stack.Screen
               name="Home"
-              component={HomeScreen}
+              component={this.Home}
               options={{
                 header: () => {
                   "none";
