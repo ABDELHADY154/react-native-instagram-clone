@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { StyleSheet, Text, View, Image } from "react-native";
+import { StyleSheet, Text, View, Image, Alert } from "react-native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { Input, Button } from "galio-framework";
 import { firebase } from "../../Firebase/FireBaseConfig";
@@ -15,6 +15,32 @@ export default class SignUpScreen extends Component {
     password: "",
     err: "",
     image: null,
+    file: null,
+  };
+  getFileName(name, path) {
+    if (name != null) {
+      return name;
+    }
+
+    if (Platform.OS === "ios") {
+      path = "~" + path.substring(path.indexOf("/Documents"));
+    }
+    return path.split("/").pop();
+  }
+  getPlatformPath({ path, uri }) {
+    return Platform.select({
+      android: { path },
+      ios: { uri },
+    });
+  }
+  uploadImage = async (uri, imageName) => {
+    const response = await fetch(uri);
+    const blob = await response.blob();
+    var ref = firebase
+      .storage()
+      .ref()
+      .child("profileImages/" + imageName);
+    return ref.put(blob);
   };
   async componentDidMount() {
     if (Platform.OS !== "web") {
@@ -75,6 +101,7 @@ export default class SignUpScreen extends Component {
           var userData = {
             user: res.user,
           };
+          this.uploadImage(this.state.image, res.user.uid);
           console.log("User registered successfully!");
           var jsonUserData = JSON.stringify(userData);
           await AsyncStorage.setItem("userData", jsonUserData);

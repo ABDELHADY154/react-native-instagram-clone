@@ -15,7 +15,7 @@ export default class SignInScreen extends Component {
 
   login = () => {
     if (this.state.email === "" && this.state.password === "") {
-      Alert.alert("Enter details to signin!");
+      alert("Enter details to signin!");
     } else {
       firebase
         .auth()
@@ -24,7 +24,7 @@ export default class SignInScreen extends Component {
           this.props.signIn(res.user);
           console.log("User logged-in successfully!");
         })
-        .catch(error => this.setState({ errorMessage: error.message }));
+        .catch(error => this.setState({ err: error.message }));
     }
   };
   render() {

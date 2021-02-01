@@ -8,16 +8,22 @@ import { useNavigation } from "@react-navigation/native";
 
 class Home extends Component {
   state = {
-    displayName: firebase.auth().currentUser.displayName,
-    image: firebase.auth().currentUser.photoURL,
-    uid: firebase.auth().currentUser.uid,
+    displayName: null,
+    image: null,
+    uid: null,
   };
+  componentDidMount() {
+    this.setState({
+      displayName: firebase.auth().currentUser.displayName,
+      image: firebase.auth().currentUser.photoURL,
+      uid: firebase.auth().currentUser.uid,
+    });
+  }
   signOut = () => {
     firebase
       .auth()
       .signOut()
       .then(() => {
-        const { navigation } = this.props;
         console.log("logged out");
         this.props.loggOut();
       })

@@ -15,7 +15,6 @@ import * as Font from "expo-font";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Stack = createStackNavigator();
-
 LogBox.ignoreLogs(["Setting a timer for a long period of time"]);
 
 export default class App extends Component {
@@ -33,6 +32,7 @@ export default class App extends Component {
       this.setState({
         isLoggedIn: false,
         userData: userData,
+        isLoading: true,
         user: await AsyncStorage.getItem("userData"),
       });
     };
@@ -75,9 +75,6 @@ export default class App extends Component {
   }
   async componentDidMount() {
     this.loadFonts();
-    // if (firebase.auth().currentUser) {
-    //   this.setState({ isLoggedIn: true });
-    // }
     setTimeout(() => {
       this.setState({ isLoading: true });
     }, 2000);
@@ -93,7 +90,7 @@ export default class App extends Component {
     return (
       <NavigationContainer>
         <Stack.Navigator>
-          {firebase.auth().currentUser == null ? ( //this.state.isLoggedIn == false ? (
+          {firebase.auth().currentUser == null ? (
             <>
               <Stack.Screen
                 name="SignIn"
