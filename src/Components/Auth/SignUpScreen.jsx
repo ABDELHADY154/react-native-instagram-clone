@@ -102,10 +102,7 @@ export default class SignUpScreen extends Component {
             user: res.user,
           };
           this.uploadImage(this.state.image, res.user.uid);
-          console.log("User registered successfully!");
-          var jsonUserData = JSON.stringify(userData);
-          await AsyncStorage.setItem("userData", jsonUserData);
-          this.props.registered(userData);
+          this.props.registered(userData.user);
           console.log("registerd sucessflly");
         })
         .catch(error => {

@@ -5,6 +5,10 @@ import { Icon } from "react-native-elements";
 import { firebase } from "../../Firebase/FireBaseConfig";
 import { Avatar } from "react-native-elements";
 import { useNavigation } from "@react-navigation/native";
+import { cos } from "react-native-reanimated";
+import { Image } from "react-native-elements";
+import Profile from "../Profile/ProfileScreen";
+import { Card } from "react-native-elements";
 
 class Home extends Component {
   state = {
@@ -12,36 +16,25 @@ class Home extends Component {
     image: null,
     uid: null,
   };
-  componentDidMount() {
-    this.setState({
-      displayName: firebase.auth().currentUser.displayName,
-      image: firebase.auth().currentUser.photoURL,
-      uid: firebase.auth().currentUser.uid,
-    });
-  }
-  signOut = () => {
-    firebase
-      .auth()
-      .signOut()
-      .then(() => {
-        console.log("logged out");
-        this.props.loggOut();
-      })
-      .catch(error => console.log(error));
-  };
+
   render() {
     const { navigation } = this.props;
+
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <Avatar
-          rounded
-          source={{
-            uri: this.state.image,
+        <Card
+          containerStyle={{
+            width: "90%",
+            borderRadius: 10,
           }}
-          size="large"
-        />
-        <Text>Home! {this.state.displayName}</Text>
-        <Button color="#3740FE" title="Logout" onPress={() => this.signOut()} />
+        >
+          <Card.Image
+            source={require("../../Assets/logo.png")}
+            style={{ width: "100%" }}
+          ></Card.Image>
+          <Card.Divider />
+          <Card.Title>HELLO WORLD</Card.Title>
+        </Card>
       </View>
     );
   }
@@ -54,24 +47,21 @@ function SettingsScreen({ navigation }) {
     </View>
   );
 }
-function ProfileScreen() {
-  return (
-    <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-      <Text>Profile!</Text>
-    </View>
-  );
-}
 const Tab = createBottomTabNavigator();
 
 export default class HomeScreen extends Component {
   HomeScreenNav = props => {
     const navigation = useNavigation();
+    return <Home {...props} navigation={navigation} />;
+  };
+  ProfileScreenNav = props => {
+    const navigation = useNavigation();
     userUpdates = () => {
       this.props.signOut();
     };
-
-    return <Home {...props} navigation={navigation} loggOut={userUpdates} />;
+    return <Profile {...props} navigation={navigation} loggOut={userUpdates} />;
   };
+
   render() {
     return (
       <Tab.Navigator
@@ -116,7 +106,7 @@ export default class HomeScreen extends Component {
         />
         <Tab.Screen
           name="profile"
-          component={ProfileScreen}
+          component={this.ProfileScreenNav}
           options={{
             tabBarIcon: () => (
               <Icon

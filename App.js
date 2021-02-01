@@ -33,11 +33,15 @@ export default class App extends Component {
         isLoggedIn: false,
         userData: userData,
         isLoading: true,
-        user: await AsyncStorage.getItem("userData"),
       });
     };
     return (
-      <HomeScreen {...props} navigation={navigation} signOut={loggedOut} />
+      <HomeScreen
+        {...props}
+        navigation={navigation}
+        signOut={loggedOut}
+        logIn={this.state.userData}
+      />
     );
   };
   SignIn = props => {
@@ -46,7 +50,6 @@ export default class App extends Component {
       this.setState({
         isLoggedIn: true,
         userData: userData,
-        user: await AsyncStorage.getItem("userData"),
       });
     };
     return (
@@ -56,11 +59,11 @@ export default class App extends Component {
   SignUp = props => {
     const navigation = useNavigation();
 
-    const register = async Data => {
+    const register = async userData => {
       this.setState({
         isLoggedIn: true,
-        userData: Data,
-        user: await AsyncStorage.getItem("userData"),
+        userData: userData,
+        // user: await AsyncStorage.getItem("userData"),
       });
     };
     return (
@@ -123,7 +126,7 @@ export default class App extends Component {
             />
           )}
         </Stack.Navigator>
-        <StatusBar style="dark" />
+        <StatusBar style="auto" />
       </NavigationContainer>
     );
   }
