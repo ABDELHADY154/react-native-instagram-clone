@@ -8,6 +8,7 @@ import SplashScreen from "./src/Components/MainScreen/SplashScreen";
 import HomeScreen from "./src/Components/Home/HomeScreen";
 import SignInScreen from "./src/Components/Auth/SignInScreen";
 import SignUpScreen from "./src/Components/Auth/SignUpScreen";
+import ShowPost from "./src/Components/Posts/ShowPost";
 import { firebase } from "./src/Firebase/FireBaseConfig";
 import { useNavigation } from "@react-navigation/native";
 import { LogBox } from "react-native";
@@ -44,6 +45,17 @@ export default class App extends Component {
       />
     );
   };
+  postShow = props => {
+    const navigation = useNavigation();
+    // const loggedOut = async userData => {
+    //   this.setState({
+    //     isLoggedIn: false,
+    //     userData: userData,
+    //     isLoading: true,
+    //   });
+    // };
+    return <ShowPost {...props} navigation={navigation} />;
+  };
   SignIn = props => {
     const navigation = useNavigation();
     const loggedIn = async userData => {
@@ -63,7 +75,6 @@ export default class App extends Component {
       this.setState({
         isLoggedIn: true,
         userData: userData,
-        // user: await AsyncStorage.getItem("userData"),
       });
     };
     return (
@@ -115,15 +126,26 @@ export default class App extends Component {
               />
             </>
           ) : (
-            <Stack.Screen
-              name="Home"
-              component={this.Home}
-              options={{
-                header: () => {
-                  "none";
-                },
-              }}
-            />
+            <>
+              <Stack.Screen
+                name="Home"
+                component={this.Home}
+                options={{
+                  header: () => {
+                    "none";
+                  },
+                }}
+              />
+              <Stack.Screen
+                name="show"
+                component={this.postShow}
+                options={{
+                  headerTitle: () => {
+                    "none";
+                  },
+                }}
+              />
+            </>
           )}
         </Stack.Navigator>
         <StatusBar style="auto" />

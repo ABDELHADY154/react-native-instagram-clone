@@ -47,7 +47,7 @@ export default class AddPostScreen extends Component {
   pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
-      allowsEditing: false,
+      allowsEditing: true,
       quality: 1,
     });
     if (!result.cancelled) {
@@ -61,15 +61,15 @@ export default class AddPostScreen extends Component {
         image: this.state.image.replace(/^.*[\\\/]/, ""),
         desc: this.state.desc,
         userUid: firebase.auth().currentUser.uid,
+        createdAt: Date.now(),
       };
       collection
         .add(post)
         .then(res => {
           this.uploadImage(this.state.image).then(() => {
             this.setState({ image: null, desc: null });
-            this.props.navigation.navigate("Home");
+            this.props.navigation.push("Home");
           });
-          console.log(res);
         })
         .catch(error => {
           console.log(error);
@@ -79,7 +79,6 @@ export default class AddPostScreen extends Component {
     }
   };
   render() {
-    console.log(this.state.image);
     const { navigation } = this.props;
     return (
       <View
@@ -155,7 +154,6 @@ export default class AddPostScreen extends Component {
             width: "90%",
             height: 1,
             borderRadius: 50,
-            // marginTop: 20,
           }}
         />
         <Input
@@ -164,6 +162,7 @@ export default class AddPostScreen extends Component {
           rounded
           bgColor="white"
           borderless={true}
+          value={this.state.desc}
           onChangeText={val => {
             this.setState({ desc: val });
           }}

@@ -63,7 +63,9 @@ export default class SignInScreen extends Component {
             rounded
             placeholderTextColor="grey"
           />
-          <Text style={{ color: "red", fontSize: 15 }}>{this.state.err}</Text>
+          <Text style={{ color: "red", fontSize: 15, textAlign: "center" }}>
+            {this.state.err}
+          </Text>
           <Button color="#E14D47" round onPress={this.login}>
             Login
           </Button>

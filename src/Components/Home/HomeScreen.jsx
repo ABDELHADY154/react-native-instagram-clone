@@ -9,13 +9,6 @@ import AllPostsScreen from "../Posts/AllPostsScreen";
 import AddPost from "../Posts/CreatePostScreen";
 import { Card } from "react-native-elements";
 
-function SettingsScreen({ navigation }) {
-  return (
-    <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-      <Text>Settings!</Text>
-    </View>
-  );
-}
 const Tab = createBottomTabNavigator();
 
 export default class HomeScreen extends Component {
@@ -23,6 +16,7 @@ export default class HomeScreen extends Component {
     const navigation = useNavigation();
     return <AllPostsScreen {...props} navigation={navigation} />;
   };
+
   AddPostScreen = props => {
     const navigation = useNavigation();
     return <AddPost {...props} navigation={navigation} />;
@@ -61,7 +55,7 @@ export default class HomeScreen extends Component {
           }}
         />
         <Tab.Screen
-          name="Settings"
+          name="AddPost"
           component={this.AddPostScreen}
           options={{
             tabBarIcon: () => (
