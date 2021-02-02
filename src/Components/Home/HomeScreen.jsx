@@ -3,42 +3,11 @@ import { StyleSheet, Text, View, Button } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Icon } from "react-native-elements";
 import { firebase } from "../../Firebase/FireBaseConfig";
-import { Avatar } from "react-native-elements";
 import { useNavigation } from "@react-navigation/native";
-import { cos } from "react-native-reanimated";
-import { Image } from "react-native-elements";
 import Profile from "../Profile/ProfileScreen";
+import AllPostsScreen from "../Posts/AllPostsScreen";
+import AddPost from "../Posts/CreatePostScreen";
 import { Card } from "react-native-elements";
-
-class Home extends Component {
-  state = {
-    displayName: null,
-    image: null,
-    uid: null,
-  };
-
-  render() {
-    const { navigation } = this.props;
-
-    return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <Card
-          containerStyle={{
-            width: "90%",
-            borderRadius: 10,
-          }}
-        >
-          <Card.Image
-            source={require("../../Assets/logo.png")}
-            style={{ width: "100%" }}
-          ></Card.Image>
-          <Card.Divider />
-          <Card.Title>HELLO WORLD</Card.Title>
-        </Card>
-      </View>
-    );
-  }
-}
 
 function SettingsScreen({ navigation }) {
   return (
@@ -52,7 +21,11 @@ const Tab = createBottomTabNavigator();
 export default class HomeScreen extends Component {
   HomeScreenNav = props => {
     const navigation = useNavigation();
-    return <Home {...props} navigation={navigation} />;
+    return <AllPostsScreen {...props} navigation={navigation} />;
+  };
+  AddPostScreen = props => {
+    const navigation = useNavigation();
+    return <AddPost {...props} navigation={navigation} />;
   };
   ProfileScreenNav = props => {
     const navigation = useNavigation();
@@ -89,7 +62,7 @@ export default class HomeScreen extends Component {
         />
         <Tab.Screen
           name="Settings"
-          component={SettingsScreen}
+          component={this.AddPostScreen}
           options={{
             tabBarIcon: () => (
               <Icon

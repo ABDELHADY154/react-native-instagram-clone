@@ -17,22 +17,7 @@ export default class SignUpScreen extends Component {
     image: null,
     file: null,
   };
-  getFileName(name, path) {
-    if (name != null) {
-      return name;
-    }
 
-    if (Platform.OS === "ios") {
-      path = "~" + path.substring(path.indexOf("/Documents"));
-    }
-    return path.split("/").pop();
-  }
-  getPlatformPath({ path, uri }) {
-    return Platform.select({
-      android: { path },
-      ios: { uri },
-    });
-  }
   uploadImage = async (uri, imageName) => {
     const response = await fetch(uri);
     const blob = await response.blob();
