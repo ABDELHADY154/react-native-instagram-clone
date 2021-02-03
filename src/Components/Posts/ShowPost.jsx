@@ -59,7 +59,6 @@ export default class ShowPost extends Component {
       .collection("posts")
       .doc(this.props.route.params.docId)
       .delete();
-    console.log(res);
     this.props.navigation.push("Home");
   };
   editForm = () => {
@@ -72,21 +71,21 @@ export default class ShowPost extends Component {
       .doc(this.props.route.params.docId);
     if (this.state.desc && this.state.image) {
       this.uploadImage(this.state.newImage);
+      var img = this.state.newImage
+        ? this.state.newImage.replace(/^.*[\\\/]/, "")
+        : this.state.postImageName;
       var post = {
-        image: this.state.newImage
-          ? this.state.newImage.replace(/^.*[\\\/]/, "")
-          : this.state.postImageName,
+        image: img,
         desc: this.state.desc,
         userUid: firebase.auth().currentUser.uid,
         createdAt: Date.now(),
       };
-      console.log(post);
       collection
         .set(post)
-        .then(() => {
-          this.props.navigation.push("Home");
+        .then(async () => {
+          await this.props.navigation.push("Home");
         })
-        .catch(err => console.log(err));
+        .catch(err => console.log("1"));
     } else {
       alert("Please Fill all fields");
     }
@@ -114,6 +113,7 @@ export default class ShowPost extends Component {
   }
   render() {
     const { navigation } = this.props;
+    console.log(this.state.newImage);
     return (
       <View
         style={{
@@ -256,9 +256,7 @@ export default class ShowPost extends Component {
               iconColor="#fff"
               style={{ width: 60, height: 60 }}
               onPress={() => {
-                navigation.push("show", {
-                  docId: this.props.route.params.docId,
-                });
+                this.props.navigation.push("Home");
               }}
             >
               Edit

@@ -16,7 +16,10 @@ import * as Font from "expo-font";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Stack = createStackNavigator();
-LogBox.ignoreLogs(["Setting a timer for a long period of time"]);
+LogBox.ignoreLogs([
+  "Setting a timer for a long period of time",
+  "Possible Unhandled Promise Rejection",
+]);
 
 export default class App extends Component {
   state = {
