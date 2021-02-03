@@ -47,13 +47,6 @@ export default class App extends Component {
   };
   postShow = props => {
     const navigation = useNavigation();
-    // const loggedOut = async userData => {
-    //   this.setState({
-    //     isLoggedIn: false,
-    //     userData: userData,
-    //     isLoading: true,
-    //   });
-    // };
     return <ShowPost {...props} navigation={navigation} />;
   };
   SignIn = props => {
