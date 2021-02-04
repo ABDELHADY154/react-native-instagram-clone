@@ -1,9 +1,7 @@
 import React, { Component } from "react";
 import { StyleSheet, Text, View, Image } from "react-native";
-import { createStackNavigator } from "@react-navigation/stack";
 import { Input, Button } from "galio-framework";
 import { firebase } from "../../Firebase/FireBaseConfig";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Divider } from "react-native-elements";
 
 export default class SignInScreen extends Component {
@@ -131,32 +129,3 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
 });
-// const collection = firebase.firestore().collection("users");
-// const users = collection.get();
-// users
-//   .then(res => {
-//     res.forEach(async doc => {
-//       if (
-//         this.state.email == doc.data().email &&
-//         this.state.password == doc.data().password
-//       ) {
-//         var user = {
-//           id: doc.id,
-//           data: doc.data(),
-//         };
-//         var jsonUserData = JSON.stringify(user);
-//         await AsyncStorage.setItem("userData", jsonUserData);
-//         this.props.signIn(user);
-//         console.log("user logged in successfully");
-//       }
-//       if (
-//         this.state.email !== doc.data().email ||
-//         this.state.password !== doc.data().password
-//       ) {
-//         this.setState({ err: "user data invalid" });
-//       }
-//     });
-//   })
-//   .catch(err => {
-//     console.log(err);
-//   });

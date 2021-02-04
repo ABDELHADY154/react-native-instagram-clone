@@ -1,11 +1,6 @@
 import { StatusBar } from "expo-status-bar";
 import React, { Component } from "react";
 import { StyleSheet, Text, View, Image, ActivityIndicator } from "react-native";
-import { NavigationContainer } from "@react-navigation/native";
-import { createStackNavigator } from "@react-navigation/stack";
-import { Avatar } from "react-native-paper";
-
-const Stack = createStackNavigator();
 
 export default class SplashScreen extends Component {
   render() {

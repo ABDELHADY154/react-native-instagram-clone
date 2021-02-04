@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { firebase } from "../../Firebase/FireBaseConfig";
-import { Card } from "react-native-elements";
 import { ScrollView } from "react-native-gesture-handler";
 import Post from "./Post";
 export default class AllPosts extends Component {

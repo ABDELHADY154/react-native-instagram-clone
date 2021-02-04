@@ -1,10 +1,8 @@
 import React, { Component } from "react";
-import { StyleSheet, Text, View, Image, Alert } from "react-native";
-import { createStackNavigator } from "@react-navigation/stack";
+import { StyleSheet, Text, View, Image } from "react-native";
 import { Input, Button } from "galio-framework";
 import { firebase } from "../../Firebase/FireBaseConfig";
 import * as ImagePicker from "expo-image-picker";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Avatar } from "react-native-elements";
 import { Divider } from "react-native-elements";
 
@@ -267,15 +265,3 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
 });
-// collection
-//   .add(user)
-//   .then(async res => {
-//     let userId = res.id;
-//     let user = (await collection.doc(userId).get()).data();
-//     var userData = {
-//       id: userId,
-//       data: user,
-//     };
-//     var jsonUserData = JSON.stringify(userData);
-//     await AsyncStorage.setItem("userData", jsonUserData);
-//     this.props.registered(userData);

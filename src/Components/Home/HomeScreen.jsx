@@ -1,13 +1,11 @@
 import React, { Component } from "react";
-import { StyleSheet, Text, View, Button } from "react-native";
+import { StyleSheet } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Icon } from "react-native-elements";
-import { firebase } from "../../Firebase/FireBaseConfig";
 import { useNavigation } from "@react-navigation/native";
 import Profile from "../Profile/ProfileScreen";
 import AllPostsScreen from "../Posts/AllPostsScreen";
 import AddPost from "../Posts/CreatePostScreen";
-import { Card } from "react-native-elements";
 
 const Tab = createBottomTabNavigator();
 

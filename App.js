@@ -13,7 +13,6 @@ import { firebase } from "./src/Firebase/FireBaseConfig";
 import { useNavigation } from "@react-navigation/native";
 import { LogBox } from "react-native";
 import * as Font from "expo-font";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Stack = createStackNavigator();
 LogBox.ignoreLogs([

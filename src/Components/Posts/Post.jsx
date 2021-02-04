@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { firebase } from "../../Firebase/FireBaseConfig";
 import { Card } from "react-native-elements";
 import { TouchableOpacity } from "react-native-gesture-handler";
